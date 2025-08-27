@@ -49,6 +49,10 @@ app.use("/api/v1/messages", messageRoutes);
 app.use("/api/v1/friends", friendshipRoutes);
 app.use("/api/v1/groups", groupRoutes);
 
+
+
+const frontendPath = path.join(__dirname, "../../frontend/dist");
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(frontendPath));
 
