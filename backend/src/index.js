@@ -50,9 +50,10 @@ app.use("/api/v1/friends", friendshipRoutes);
 app.use("/api/v1/groups", groupRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  app.use(express.static(frontendPath));
+
   app.get("/*w", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 
