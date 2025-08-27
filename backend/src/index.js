@@ -9,14 +9,16 @@ import cookieParser from 'cookie-parser';
 import { connectDB } from './lib/db.js';
 import { app, server } from './lib/socket.js';
 import path from 'path';
+import { fileURLToPath } from "url";
 
 dotenv.config();
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ALLOWED_ORIGINS = [
-  'http://localhost:5173',  // Development
-  'http://localhost:4173',  // Vite preview
-  process.env.FRONTEND_URL, // Production URL from env
+  'http://localhost:5173',
+  'http://localhost:4173', 
+  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 // Middleware
