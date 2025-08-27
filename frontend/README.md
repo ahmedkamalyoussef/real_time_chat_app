@@ -1,0 +1,182 @@
+# Chat Application Frontend
+
+A modern real-time chat application built with React, Tailwind CSS, and DaisyUI.
+
+## ✨ Features
+
+- **Real-time Chat**
+  - Instant messaging
+  - Voice messages with waveform visualization
+  - Image sharing with preview
+  - Typing indicators
+  - Online/offline status
+  - Message status (sent/delivered/read)
+
+- **Modern UI/UX**
+  - Responsive design
+  - Dark/Light theme support
+  - Custom scrollbars
+  - Smooth animations
+  - Loading states
+  - Error handling
+
+- **Authentication**
+  - JWT-based auth
+  - Protected routes
+  - Persistent login
+  - Profile management
+
+## 🔧 Tech Stack
+
+- **Core**
+  - React 18
+  - Vite
+  - Socket.IO Client
+  - Zustand (State Management)
+  - React Router v6
+
+- **Styling**
+  - Tailwind CSS
+  - DaisyUI
+  - Lucide Icons
+
+- **Development**
+  - ESLint
+  - Prettier
+  - TypeScript
+  - Husky (Git Hooks)
+
+## 📋 Prerequisites
+
+- Node.js (v14.0.0 or higher)
+- npm or yarn
+- Backend server running
+
+## 🚀 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://your-repository-url.git
+   cd chat-app-frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   Create `.env` file:
+   ```env
+   VITE_API_URL=http://localhost:5001/api/v1
+   VITE_WS_URL=http://localhost:5001
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # Reusable components
+│   ├── auth/           # Authentication related
+│   ├── chat/           # Chat related
+│   ├── common/         # Common components
+│   └── sidebar/        # Sidebar components
+├── hooks/              # Custom React hooks
+├── pages/              # Page components
+├── store/              # Zustand store
+├── styles/             # Global styles
+├── types/              # TypeScript types
+└── utils/              # Utility functions
+```
+
+## 🎨 Component Architecture
+
+### Core Components
+- **ChatContainer**: Main chat interface
+- **MessageItem**: Individual message display
+- **Sidebar**: Friend list and navigation
+- **MessageInput**: Text/Voice/Image input
+- **AudioPlayer**: Custom audio message player
+
+### State Management
+- **useChatStore**: Chat related state
+- **useAuthStore**: Authentication state
+- **useThemeStore**: Theme preferences
+- **useFriendsStore**: Friends management
+
+## 🔌 Socket Events
+
+### Emitted Events
+- `sendMessage`
+- `typing`
+- `stopTyping`
+- `recording`
+
+### Listened Events
+- `messageReceived`
+- `userOnline`
+- `userOffline`
+- `userDoSomething`
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Breakpoints:
+  - `sm`: 640px
+  - `md`: 768px
+  - `lg`: 1024px
+  - `xl`: 1280px
+
+## 🎯 Scripts
+
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm run preview    # Preview production build
+npm run lint       # Run ESLint
+npm run format     # Format with Prettier
+```
+
+## 🔒 Security
+
+- JWT token storage in secure cookies
+- XSS prevention
+- CORS configuration
+- Input sanitization
+- Secure WebSocket connection
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Contributors
+
+- Your Name - *Initial work* - [YourGithub](https://github.com/yourusername)
+
+## 🙏 Acknowledgments
+
+- DaisyUI for the beautiful components
+- Socket.IO for real-time capabilities
+- React community for inspiration
