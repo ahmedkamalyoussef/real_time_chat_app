@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
-export const useFriendsStore = create((set, get) => ({
+export const useFriendsStore = create((set) => ({
   friends: [],
   searchResults: [],
   isFriendsLoading: false,
@@ -36,11 +36,14 @@ export const useFriendsStore = create((set, get) => ({
     try {
       const authUser = JSON.parse(localStorage.getItem("authUser")) || {};
       if (authUser._id) {
+        console.log("🔄 Refreshing online friends for user:", authUser._id);
         const res = await axiosInstance.get(`/friends/online/${authUser._id}`);
+        console.log("📡 Online friends response:", res.data);
         set({ onlineFriends: res.data.onlineFriends });
+        console.log("✅ Online friends updated:", res.data.onlineFriends);
       }
     } catch (error) {
-      console.error("Error refreshing online friends:", error);
+      console.error("❌ Error refreshing online friends:", error);
     }
   },
 
@@ -75,7 +78,7 @@ export const useFriendsStore = create((set, get) => ({
   acceptFriendRequest: async (requesterId) => {
     set({ loading: true });
     try {
-      const res = await axiosInstance.patch(`/friends/accept/${requesterId}`);
+      await axiosInstance.patch(`/friends/accept/${requesterId}`);
       toast.success("Friend request accepted");
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to accept request");

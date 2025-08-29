@@ -88,11 +88,13 @@ export const useAuthStore = create((set, get) => ({
 
     socket.on("userOnline", (userId) => {
       // User came online - refresh online friends
+      console.log("🟢 User came online:", userId);
       useFriendsStore.getState().refreshOnlineFriends();
     });
 
     socket.on("userOffline", (userId) => {
       // User went offline - refresh online friends
+      console.log("🔴 User went offline:", userId);
       useFriendsStore.getState().refreshOnlineFriends();
     });
     socket.on("newFriendRequest", () => {

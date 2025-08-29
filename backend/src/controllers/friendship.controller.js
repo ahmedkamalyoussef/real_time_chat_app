@@ -271,6 +271,7 @@ deleteFriend: async (friendId) => {
 export const getOnlineFriends = async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log(`=== Getting online friends for user: ${userId} ===`);
 
     // Get user's friends
     const friendships = await Friendship.find({
@@ -280,6 +281,8 @@ export const getOnlineFriends = async (req, res) => {
       ],
     });
 
+    console.log(`Found ${friendships.length} friendships for user ${userId}`);
+
     // Extract friend IDs
     const friendIds = friendships.map((friendship) =>
       friendship.requester.toString() === userId
@@ -287,13 +290,21 @@ export const getOnlineFriends = async (req, res) => {
         : friendship.requester.toString()
     );
 
-    // Get online users from socket (we'll store this in memory or Redis)
+    console.log(`Friend IDs:`, friendIds);
+
+    // Get online users from socket
     const onlineUsers = global.onlineUsers || [];
+    console.log(`Global online users:`, onlineUsers);
+    console.log(`Global online users type:`, typeof global.onlineUsers);
+    console.log(`Global online users length:`, global.onlineUsers?.length);
 
     // Filter to get only online friends
     const onlineFriends = onlineUsers.filter((onlineUserId) =>
       friendIds.includes(onlineUserId)
     );
+
+    console.log(`Online friends for user ${userId}:`, onlineFriends);
+    console.log(`=== End getting online friends ===`);
 
     res.status(200).json({ onlineFriends });
   } catch (error) {

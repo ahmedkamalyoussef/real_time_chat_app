@@ -27,6 +27,9 @@ if (!global.onlineUsers) {
   global.onlineUsers = [];
 }
 
+// Debug: Log current online users
+console.log("Initial online users:", global.onlineUsers);
+
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
@@ -44,6 +47,7 @@ io.on("connection", (socket) => {
       console.log(
         `User ${userId} added to online users. Total online: ${global.onlineUsers.length}`
       );
+      console.log("Current online users:", global.onlineUsers);
     }
 
     // Emit online status to all connected clients
@@ -70,6 +74,7 @@ io.on("connection", (socket) => {
       console.log(
         `User ${userId} removed from online users. Total online: ${global.onlineUsers.length}`
       );
+      console.log("Current online users:", global.onlineUsers);
 
       // Emit offline status to all connected clients
       io.emit("userOffline", userId);

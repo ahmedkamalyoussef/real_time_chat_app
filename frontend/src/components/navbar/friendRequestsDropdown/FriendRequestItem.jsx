@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useFriendsStore } from "../../../store/useFriendsStore";
 import { Check, X, Loader2 } from "lucide-react";
 
-function FriendRequestItem({ request, onClose }) {
+function FriendRequestItem({ request }) {
   const { acceptFriendRequest, rejectFriendRequest, getFriendRequests } =
     useFriendsStore();
   const [isLoading, setIsLoading] = useState(false);

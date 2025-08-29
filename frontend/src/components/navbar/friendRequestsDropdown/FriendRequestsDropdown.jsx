@@ -11,7 +11,7 @@ function FriendRequestsDropdown({ onClose }) {
   }, [getFriendRequests]);
 
   return (
-    <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-hidden z-50">
+    <div className="absolute top-full right-0 mt-2 w-72 sm:w-80 md:w-96 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-hidden z-50 transform -translate-x-1/2 left-1/2 sm:transform-none sm:left-auto">
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-base-300 bg-base-200">
         <div className="flex items-center gap-2">
