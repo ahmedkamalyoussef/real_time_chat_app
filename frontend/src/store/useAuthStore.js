@@ -86,16 +86,8 @@ export const useAuthStore = create((set, get) => ({
     socket.connect();
     set({ socket });
 
-    socket.on("userOnline", (userId) => {
-      // User came online - refresh online friends
-      console.log("🟢 User came online:", userId);
-      useFriendsStore.getState().refreshOnlineFriends();
-    });
-
-    socket.on("userOffline", (userId) => {
-      // User went offline - refresh online friends
-      console.log("🔴 User went offline:", userId);
-      useFriendsStore.getState().refreshOnlineFriends();
+    socket.on("getOnlineUsers", (userIds) => {
+      useFriendsStore.getState().setOnlineFriends(userIds);
     });
     socket.on("newFriendRequest", () => {
       useFriendsStore.getState().getFriendRequests();
@@ -116,10 +108,6 @@ export const useAuthStore = create((set, get) => ({
     useGroupChatStore.getState().subscribeToGroupSocket();
 
     console.log("connected to socket server");
-
-    // Test: Load online friends immediately after connection
-    console.log("🧪 Testing online friends functionality...");
-    useFriendsStore.getState().refreshOnlineFriends();
   },
 
   disConnectSocket: () => {

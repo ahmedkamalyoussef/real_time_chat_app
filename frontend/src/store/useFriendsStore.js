@@ -32,21 +32,6 @@ export const useFriendsStore = create((set) => ({
 
   setOnlineFriends: (userIds) => set({ onlineFriends: userIds }),
 
-  refreshOnlineFriends: async () => {
-    try {
-      const authUser = JSON.parse(localStorage.getItem("authUser")) || {};
-      if (authUser._id) {
-        console.log("🔄 Refreshing online friends for user:", authUser._id);
-        const res = await axiosInstance.get(`/friends/online/${authUser._id}`);
-        console.log("📡 Online friends response:", res.data);
-        set({ onlineFriends: res.data.onlineFriends });
-        console.log("✅ Online friends updated:", res.data.onlineFriends);
-      }
-    } catch (error) {
-      console.error("❌ Error refreshing online friends:", error);
-    }
-  },
-
   searchFriend: async (handleToSearch) => {
     set({ loading: true });
     try {
@@ -91,7 +76,7 @@ export const useFriendsStore = create((set) => ({
     set({ loading: true });
     try {
       await axiosInstance.post(`/friends/reject/${requesterId}`);
-      toast.success("Friend request rejected ❌");
+      toast.success("Friend request rejected");
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to reject request");
     } finally {

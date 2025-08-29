@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-
+import { getFriendsIds } from "../utils/helpers.js";
 const app = express();
 const server = http.createServer(app);
 
@@ -22,37 +22,27 @@ const io = new Server(server, {
 
 const userSocketMap = {};
 
-// Initialize global online users array if it doesn't exist
-if (!global.onlineUsers) {
-  global.onlineUsers = [];
-}
-
-// Debug: Log current online users
-console.log("Initial online users:", global.onlineUsers);
-
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log(`User ${socket.id} connected`);
   const userId = socket.handshake.query.userId;
 
   if (userId) {
     userSocketMap[userId] = socket.id;
-
-    // Add user to global online users if not already there
-    if (!global.onlineUsers.includes(userId)) {
-      global.onlineUsers.push(userId);
-      console.log(
-        `User ${userId} added to online users. Total online: ${global.onlineUsers.length}`
-      );
-      console.log("Current online users:", global.onlineUsers);
-    }
-
-    // Emit online status to all connected clients
-    io.emit("userOnline", userId);
   }
+
+  const friendsIds = await getFriendsIds(userId);
+
+  const onlineUsers = Object.keys(userSocketMap);
+
+  const onlineFriends = onlineUsers.filter(
+    (id) => id !== userId && friendsIds.includes(id)
+  );
+
+  io.to(socket.id).emit("getOnlineUsers", onlineFriends);
 
   socket.on("joinGroup", (groupId) => {
     socket.join(groupId);
@@ -68,17 +58,8 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} disconnected`);
     if (userId) {
       delete userSocketMap[userId];
-
-      // Remove user from global online users
-      global.onlineUsers = global.onlineUsers.filter((id) => id !== userId);
-      console.log(
-        `User ${userId} removed from online users. Total online: ${global.onlineUsers.length}`
-      );
-      console.log("Current online users:", global.onlineUsers);
-
-      // Emit offline status to all connected clients
-      io.emit("userOffline", userId);
     }
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
