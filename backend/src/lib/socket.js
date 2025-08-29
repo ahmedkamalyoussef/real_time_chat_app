@@ -7,7 +7,16 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      "http://localhost:3000",
+      "https://chatty-f.up.railway.app",
+      "https://chatty-prod.up.railway.app",
+      process.env.FRONTEND_URL,
+    ],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   },
 });
 
