@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "build": "npm install"
+    "build": "npm install",
+    "start:prod": "NODE_ENV=production node src/index.js",
+    "railway": "npm install && npm run start:prod"
   },
   "keywords": [],
   "author": "",

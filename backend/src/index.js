@@ -8,16 +8,15 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
 import { app, server } from "./lib/socket.js";
-import path from "path";
-import { fileURLToPath } from "url";
+
 
 dotenv.config();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 const ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:4173",
+  "http://localhost:3000",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -48,11 +47,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/messages", messageRoutes);
 app.use("/api/v1/friends", friendshipRoutes);
 app.use("/api/v1/groups", groupRoutes);
-
-
-
-const frontendPath = path.join(__dirname, "../../frontend/dist");
-
 
 
 app.use((err, req, res, next) => {
