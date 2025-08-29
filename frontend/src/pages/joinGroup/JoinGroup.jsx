@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../lib/axios";
+import { useGroupChatStore } from "../../store/useGroupChatStore";
 import toast from "react-hot-toast";
 
 export default function JoinGroup() {
   const { token } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const { setSelectedGroup } = useGroupChatStore();
 
   useEffect(() => {
     const join = async () => {
       try {
-        await axiosInstance.post(`/groups/join/${token}`);
+        const res =await axiosInstance.post(`/groups/join/${token}`);
+        setSelectedGroup(res.data);
         toast.success("Joined group successfully 🎉");
         navigate("/");
       } catch (err) {

@@ -11,6 +11,7 @@ const groupSchema = new mongoose.Schema({
   admin: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   members: [
     {
+      _id:false,
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       role: { type: String, enum: ["member", "admin"], default: "member" },
     }
@@ -27,7 +28,7 @@ groupSchema.pre("save", function (next) {
   next();
 });
 
-// ✅ Prevent duplicate members in the same group
+//Prevent duplicate members in the same group
 groupSchema.index(
   { _id: 1, "members.userId": 1 },
   { unique: true, partialFilterExpression: { "members.userId": { $exists: true } } }

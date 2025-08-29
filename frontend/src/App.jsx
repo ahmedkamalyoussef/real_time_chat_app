@@ -27,7 +27,7 @@ function App() {
     </div>
   )
   return (
-    <div   data-theme={theme}>
+    <div data-theme={theme}>
       <Navbar />
           {/* <h1 className='mt-20'>current : {theme}</h1> */}
 
