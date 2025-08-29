@@ -17,10 +17,9 @@ const GroupChatHeader = () => {
 
   const isAdmin = selectedGroup.members?.some(
   (m) =>
-    (m.userId?._id === authUser._id || m.userId === authUser._id) &&
+    (m.user?._id === authUser._id || m.user === authUser._id) &&
     m.role === "admin"
 );
-
 
   const handleCopyLink = async () => {
     try {
@@ -41,7 +40,7 @@ const GroupChatHeader = () => {
           <div className="avatar">
             <div className="size-10 rounded-full relative">
               <img
-                src={selectedGroup.groupPicture}
+                src={selectedGroup.groupPicture || "https://cdn-icons-png.flaticon.com/512/1946/1946429.png"}
                 alt={selectedGroup.name}
               />
             </div>

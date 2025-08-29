@@ -14,8 +14,7 @@ export default function JoinGroup() {
     const join = async () => {
       try {
         const res =await axiosInstance.post(`/groups/join/${token}`);
-        setSelectedGroup(res.data);
-        toast.success("Joined group successfully 🎉");
+        setSelectedGroup(res.data.group);
         navigate("/");
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to join group");

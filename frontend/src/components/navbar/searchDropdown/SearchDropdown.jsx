@@ -18,7 +18,10 @@ function SearchDropdown({ onClose }) {
   }, [searchQuery, searchFriend]);
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
+    <div 
+      className="absolute top-full left-0 right-0 mt-2 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
+      onMouseDown={(e) => e.stopPropagation()} // Stop click from propagating to the Navbar's outside click handler
+    >
       <div className="flex items-center justify-between p-3 border-b border-base-300">
         <input
           type="text"

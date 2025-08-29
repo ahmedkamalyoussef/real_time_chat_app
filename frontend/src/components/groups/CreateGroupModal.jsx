@@ -10,7 +10,7 @@ export const CreateGroupModal = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const { friends, onlineFriends } = useFriendsStore();
-  const { createGroup } = useGroupsStore(); // ✅
+  const { createGroup } = useGroupsStore(); 
 
 
   const handleImageChange = (e) => {
@@ -33,18 +33,14 @@ export const CreateGroupModal = () => {
         memberIds: selectedMembers,
       });
 
-      // قفل المودال
       document.getElementById('create-group-modal')?.close();
 
-      // تفريغ الحالة
       setGroupName('');
       setDescription('');
       setSelectedImage(null);
       setSelectedMembers([]);
-
-      toast.success("Group created successfully");
     } catch (e) {
-      // التوست بيتعمل في الستور
+      toast.error(e.response?.data?.message || "Failed to create group");
     }
   };
 
@@ -61,7 +57,6 @@ export const CreateGroupModal = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column - Group Info */}
           <div className="space-y-4">
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
@@ -109,7 +104,6 @@ export const CreateGroupModal = () => {
             </div>
           </div>
 
-          {/* Right Column - Member Selection */}
           <div className="space-y-4">
             <h4 className="font-medium">Add Members</h4>
 

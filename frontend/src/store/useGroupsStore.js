@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
+import { useGroupChatStore } from "./useGroupChatStore";
 
 export const useGroupsStore = create((set, get) => ({
   groups: [],
@@ -33,6 +34,7 @@ export const useGroupsStore = create((set, get) => ({
         groupPicture: imageBase64,
       };
       const res = await axiosInstance.post("/groups", payload);
+      useGroupChatStore.getState().setSelectedGroup(res.data);
 
       set(state => ({ groups: [res.data, ...state.groups] }));
 

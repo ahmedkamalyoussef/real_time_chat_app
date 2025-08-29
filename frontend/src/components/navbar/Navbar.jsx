@@ -9,6 +9,7 @@ import {
   User,
   Search,
   Users,
+  UserPen,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SearchDropdown from "./searchDropdown/SearchDropdown";
@@ -49,7 +50,8 @@ function Navbar() {
   return (
     <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg bg-base-100/80">
       <div className="container mx-auto px-4 h-16">
-        <div className="flex items-center justify-between h-full">
+        <div className="flex items-center justify-between h-full gap-4">
+          {/* Left Side: Logo */}
           <div className="flex items-center gap-8">
             <Link
               to="/"
@@ -58,32 +60,50 @@ function Navbar() {
               <div className="size-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-primary" />
               </div>
-              <h1 className="text-lg font-bold">Chatty</h1>
+              <h1 className="text-lg font-bold hidden sm:block">Chatty</h1>
             </Link>
           </div>
 
-          {/* Search Section */}
-          <div className="flex items-center gap-1 sm:gap-2">
-            {/* Friend Requests Button */}
+          {/* Center: Search for Desktop */}
+          {authUser && (
+            <div className="hidden md:flex flex-1 justify-center px-4">
+              <div className="relative w-full max-w-md" ref={searchRef}>
+                <div
+                  className="lg:ml-8 flex items-center w-full bg-base-200 rounded-full px-4 py-2 cursor-text"
+                  onClick={() => setShowSearch(true)}
+                >
+                  <Search className=" w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 ml-2">Search...</span>
+                </div>
+                {showSearch && (
+                  <div className="absolute left-0 top-full mt-2 w-full bg-base-100 shadow-lg rounded-lg z-50">
+                    <SearchDropdown onClose={() => setShowSearch(false)} />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Right Side: Actions */}
+          <div className="flex items-center justify-end gap-1 sm:gap-2">
             {authUser && (
               <>
-                <div
-                  className="flex-1 max-w-md mx-1 sm:mx-4 md:mx-8 relative"
-                  ref={searchRef}
-                >
-                  <div className="relative">
-                    <Search
-                      className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"
-                      onClick={() => setShowSearch(true)}
-                    />
-                  </div>
+                {/* Mobile Search Button */}
+                <div className="md:hidden" ref={searchRef}>
+                  <button
+                    onClick={() => setShowSearch(true)}
+                    className="btn btn-ghost btn-circle btn-sm"
+                  >
+                    <Search className="w-5 h-5" />
+                  </button>
                   {showSearch && (
-                    <div className="absolute left-0 mt-6 w-full min-w-[200px] max-w-sm bg-base-100 shadow-lg rounded-lg z-50">
+                    <div className="absolute top-full right-2 mt-2 w-72 bg-base-100 shadow-lg rounded-lg z-50">
                       <SearchDropdown onClose={() => setShowSearch(false)} />
                     </div>
                   )}
                 </div>
 
+                {/* Friend Requests Button */}
                 <div className="relative" ref={requestsRef}>
                   <button
                     onClick={() => setShowFriendRequests(!showFriendRequests)}
@@ -91,7 +111,6 @@ function Navbar() {
                   >
                     <Users className="w-4 h-4" />
                     <span className="hidden sm:inline">Requests</span>
-                    {/* استخدم friendRequests.length بدل requestCount */}
                     {friendRequests.length > 0 && (
                       <div className="absolute -top-1 -right-1 bg-error text-error-content text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                         {friendRequests.length > 9
@@ -109,6 +128,7 @@ function Navbar() {
               </>
             )}
 
+            {/* Settings, Profile, Logout */}
             <Link
               to={"/settings"}
               className="btn btn-sm gap-2 transition-colors"
@@ -118,17 +138,22 @@ function Navbar() {
             </Link>
             {authUser && (
               <>
-                <Link to={"/profile"} className="btn btn-sm gap-2">
-                  <User className="size-5" />
-                  <span className="hidden sm:inline">Profile</span>
-                </Link>
-                <button
-                  className="flex gap-2 items-center"
-                  onClick={() => logout(navigate)}
-                >
-                  <LogOut className="size-5" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
+                <div className="dropdown dropdown-end">
+                  <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                    <div className="w-8 rounded-full">
+                      <img alt="User avatar" src={authUser.profilePicture} />
+                    </div>
+                  </div>
+                  <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-200 rounded-box w-52">
+                    <li>
+                      <Link to={"/profile"} className="justify-between">
+                        Profile
+                        <UserPen size={16} />
+                      </Link>
+                    </li>
+                    <li><a className="justify-between" onClick={() => logout(navigate)}><span>Logout </span><LogOut size={16} /></a></li>
+                  </ul>
+                </div>
               </>
             )}
           </div>
