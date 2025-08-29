@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "build": "npm install",
     "start:prod": "NODE_ENV=production node src/index.js",
-    "railway": "npm install && npm run start:prod"
+    "railway": "npm install --omit=dev && npm run start:prod"
   },
   "keywords": [],
   "author": "",
