@@ -9,20 +9,24 @@ export const sendFriendRequest = async (req, res) => {
     const { recipientId } = req.params;
 
     if (requesterId.toString() === recipientId.toString()) {
-      return res.status(400).json({ error: "You cannot send a request to yourself" });
+      return res
+        .status(400)
+        .json({ error: "You cannot send a request to yourself" });
     }
 
     // شوف لو فيه علاقة قديمة بين الاتنين
     const existing = await Friendship.findOne({
       $or: [
         { requester: requesterId, recipient: recipientId },
-        { requester: recipientId, recipient: requesterId }
-      ]
+        { requester: recipientId, recipient: requesterId },
+      ],
     });
 
     if (existing) {
       if (existing.status === "pending") {
-        return res.status(400).json({ error: "Friend request is already pending between you two" });
+        return res
+          .status(400)
+          .json({ error: "Friend request is already pending between you two" });
       }
       if (existing.status === "accepted") {
         return res.status(400).json({ error: "You are already friends" });
@@ -37,10 +41,10 @@ export const sendFriendRequest = async (req, res) => {
 
     const receiverSocketId = getReceiverSocketId(recipientId);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit('newFriendRequest', {
-        type: 'friendRequest',
+      io.to(receiverSocketId).emit("newFriendRequest", {
+        type: "friendRequest",
         from: requesterId,
-        friendship: friendship
+        friendship: friendship,
       });
     }
 
@@ -95,7 +99,7 @@ export const rejectFriendRequest = async (req, res) => {
     const deleted = await Friendship.findOneAndDelete({
       requester: requesterId,
       recipient: recipientId,
-      status: "pending"
+      status: "pending",
     });
 
     if (!deleted) {
@@ -115,12 +119,17 @@ export const getFriends = async (req, res) => {
     const friendships = await Friendship.find({
       $or: [
         { requester: userId, status: "accepted" },
-        { recipient: userId, status: "accepted" }
-      ]
-    }).populate("requester recipient", "firstName lastName handle profilePicture");
+        { recipient: userId, status: "accepted" },
+      ],
+    }).populate(
+      "requester recipient",
+      "firstName lastName handle profilePicture"
+    );
 
-    const friends = friendships.map(f =>
-      f.requester._id.toString() === userId.toString() ? f.recipient : f.requester
+    const friends = friendships.map((f) =>
+      f.requester._id.toString() === userId.toString()
+        ? f.recipient
+        : f.requester
     );
 
     res.status(200).json(friends);
@@ -128,7 +137,6 @@ export const getFriends = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 export const searchFriend = async (req, res) => {
   try {
@@ -191,16 +199,17 @@ export const searchFriend = async (req, res) => {
 
     // نعمل map بالstatus
     const results = users.map((user) => {
-      const relation = friendships.find(
-        (f) =>
-          f.requester.toString() === meId.toString() &&
-          f.recipient.toString() === user._id.toString()
-      ) ||
-      friendships.find(
-        (f) =>
-          f.recipient.toString() === meId.toString() &&
-          f.requester.toString() === user._id.toString()
-      );
+      const relation =
+        friendships.find(
+          (f) =>
+            f.requester.toString() === meId.toString() &&
+            f.recipient.toString() === user._id.toString()
+        ) ||
+        friendships.find(
+          (f) =>
+            f.recipient.toString() === meId.toString() &&
+            f.requester.toString() === user._id.toString()
+        );
 
       let status = "none";
       if (relation) {
@@ -225,13 +234,14 @@ export const searchFriend = async (req, res) => {
   }
 };
 
-
 export const getFriendRequests = async (req, res) => {
   try {
     const meId = req.user._id;
 
-    const requests = await Friendship.find({ recipient: meId, status: "pending" })
-      .populate("requester", " _id firstName lastName handle profilePicture")
+    const requests = await Friendship.find({
+      recipient: meId,
+      status: "pending",
+    }).populate("requester", " _id firstName lastName handle profilePicture");
 
     return res.status(200).json({ requests, cout: requests.length });
   } catch (err) {
@@ -255,4 +265,39 @@ deleteFriend: async (friendId) => {
   } finally {
     set({ loading: false });
   }
-}
+};
+
+// Get online friends for a user
+export const getOnlineFriends = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Get user's friends
+    const friendships = await Friendship.find({
+      $or: [
+        { requester: userId, status: "accepted" },
+        { recipient: userId, status: "accepted" },
+      ],
+    });
+
+    // Extract friend IDs
+    const friendIds = friendships.map((friendship) =>
+      friendship.requester.toString() === userId
+        ? friendship.recipient.toString()
+        : friendship.requester.toString()
+    );
+
+    // Get online users from socket (we'll store this in memory or Redis)
+    const onlineUsers = global.onlineUsers || [];
+
+    // Filter to get only online friends
+    const onlineFriends = onlineUsers.filter((userId) =>
+      friendIds.includes(userId)
+    );
+
+    res.status(200).json({ onlineFriends });
+  } catch (error) {
+    console.error("Error getting online friends:", error);
+    res.status(500).json({ message: "Error getting online friends" });
+  }
+};

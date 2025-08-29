@@ -22,6 +22,9 @@ const io = new Server(server, {
 
 const userSocketMap = {};
 
+// Global online users array for better performance
+global.onlineUsers = [];
+
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
@@ -32,9 +35,15 @@ io.on("connection", (socket) => {
 
   if (userId) {
     userSocketMap[userId] = socket.id;
-  }
 
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    // Add user to global online users if not already there
+    if (!global.onlineUsers.includes(userId)) {
+      global.onlineUsers.push(userId);
+    }
+
+    // Emit online status to all connected clients
+    io.emit("userOnline", userId);
+  }
 
   socket.on("joinGroup", (groupId) => {
     socket.join(groupId);
@@ -50,8 +59,13 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} disconnected`);
     if (userId) {
       delete userSocketMap[userId];
+
+      // Remove user from global online users
+      global.onlineUsers = global.onlineUsers.filter((id) => id !== userId);
+
+      // Emit offline status to all connected clients
+      io.emit("userOffline", userId);
     }
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
