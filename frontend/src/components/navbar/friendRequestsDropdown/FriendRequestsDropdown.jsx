@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { useFriendsStore } from '../../../store/useFriendsStore';
-import FriendRequestItem from './FriendRequestItem';
-import { Loader2, X, Users } from 'lucide-react';
+import React, { useEffect } from "react";
+import { useFriendsStore } from "../../../store/useFriendsStore";
+import FriendRequestItem from "./FriendRequestItem";
+import { Loader2, X, Users } from "lucide-react";
 
 function FriendRequestsDropdown({ onClose }) {
   const { friendRequests, getFriendRequests, loading } = useFriendsStore();
@@ -11,15 +11,16 @@ function FriendRequestsDropdown({ onClose }) {
   }, [getFriendRequests]);
 
   return (
-    <div className="absolute top-full right-0 mt-2 w-96 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-hidden z-50">
+    <div className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-96 overflow-hidden z-50">
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-base-300 bg-base-200">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold">Friend Requests</h3>
-          {/* شيلت الكاونتر من هنا */}
+          <h3 className="font-semibold text-sm sm:text-base">
+            Friend Requests
+          </h3>
         </div>
-        <button 
+        <button
           onClick={onClose}
           className="p-1 hover:bg-base-300 rounded-full transition-colors"
         >
@@ -30,25 +31,29 @@ function FriendRequestsDropdown({ onClose }) {
       {/* Content */}
       <div className="max-h-80 overflow-y-auto">
         {loading && (
-          <div className="flex items-center justify-center p-6">
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            <span className="ml-2">Loading requests...</span>
+          <div className="flex items-center justify-center p-4 sm:p-6">
+            <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-primary" />
+            <span className="ml-2 text-sm sm:text-base">
+              Loading requests...
+            </span>
           </div>
         )}
 
         {!loading && friendRequests.length === 0 && (
-          <div className="p-6 text-center text-gray-500">
-            <Users className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-            <p>No friend requests</p>
-            <p className="text-sm">When someone sends you a friend request, it will appear here.</p>
+          <div className="p-4 sm:p-6 text-center text-gray-500">
+            <Users className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 text-gray-300" />
+            <p className="text-sm sm:text-base">No friend requests</p>
+            <p className="text-xs sm:text-sm">
+              When someone sends you a friend request, it will appear here.
+            </p>
           </div>
         )}
 
         {!loading && friendRequests.length > 0 && (
           <div>
             {friendRequests.map((request) => (
-              <FriendRequestItem 
-                key={request._id} 
+              <FriendRequestItem
+                key={request._id}
                 request={request}
                 onClose={onClose}
               />

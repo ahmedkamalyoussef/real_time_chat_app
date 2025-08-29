@@ -291,8 +291,8 @@ export const getOnlineFriends = async (req, res) => {
     const onlineUsers = global.onlineUsers || [];
 
     // Filter to get only online friends
-    const onlineFriends = onlineUsers.filter((userId) =>
-      friendIds.includes(userId)
+    const onlineFriends = onlineUsers.filter((onlineUserId) =>
+      friendIds.includes(onlineUserId)
     );
 
     res.status(200).json({ onlineFriends });

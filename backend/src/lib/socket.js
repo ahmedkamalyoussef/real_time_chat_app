@@ -22,8 +22,10 @@ const io = new Server(server, {
 
 const userSocketMap = {};
 
-// Global online users array for better performance
-global.onlineUsers = [];
+// Initialize global online users array if it doesn't exist
+if (!global.onlineUsers) {
+  global.onlineUsers = [];
+}
 
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
@@ -39,6 +41,9 @@ io.on("connection", (socket) => {
     // Add user to global online users if not already there
     if (!global.onlineUsers.includes(userId)) {
       global.onlineUsers.push(userId);
+      console.log(
+        `User ${userId} added to online users. Total online: ${global.onlineUsers.length}`
+      );
     }
 
     // Emit online status to all connected clients
@@ -62,6 +67,9 @@ io.on("connection", (socket) => {
 
       // Remove user from global online users
       global.onlineUsers = global.onlineUsers.filter((id) => id !== userId);
+      console.log(
+        `User ${userId} removed from online users. Total online: ${global.onlineUsers.length}`
+      );
 
       // Emit offline status to all connected clients
       io.emit("userOffline", userId);
