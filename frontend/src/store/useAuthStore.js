@@ -6,7 +6,7 @@ import { useFriendsStore } from "./useFriendsStore";
 import { useChatStore } from "./useChatStore";
 import { useGroupsStore } from "./useGroupsStore";
 import { useGroupChatStore } from "./useGroupChatStore";
-const SOCKET_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
