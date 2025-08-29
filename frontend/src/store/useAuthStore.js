@@ -116,6 +116,10 @@ export const useAuthStore = create((set, get) => ({
     useGroupChatStore.getState().subscribeToGroupSocket();
 
     console.log("connected to socket server");
+
+    // Test: Load online friends immediately after connection
+    console.log("🧪 Testing online friends functionality...");
+    useFriendsStore.getState().refreshOnlineFriends();
   },
 
   disConnectSocket: () => {
