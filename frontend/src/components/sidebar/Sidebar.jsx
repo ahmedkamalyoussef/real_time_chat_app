@@ -8,7 +8,7 @@ import { useGroupChatStore } from "../../store/useGroupChatStore";
 
 const Sidebar = () => {
   const { onlineFriends, getFriends, friends, isFriendsLoading } = useFriendsStore();
-  const { selectedFriend, setSelectedFriend, isDoingSomething, somethingDoingType } = useChatStore();
+  const { selectedFriend, setSelectedFriend, isDoingSomething, somethingDoingType, friendsStatus } = useChatStore();
 
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -42,8 +42,11 @@ const Sidebar = () => {
   }, [friends, onlineFriends, showOnlineOnly]);
 
   const getUserStatus = (user) => {
-    if (selectedFriend?._id === user._id && isDoingSomething) {
-      switch (somethingDoingType) {
+    const friendStatus = friendsStatus[user._id];
+    
+    // Check if this friend is doing something (typing/recording)
+    if (friendStatus && friendStatus.isDoingSomething) {
+      switch (friendStatus.type) {
         case "typing":
           return { text: "Typing...", color: "text-blue-500" };
         case "recording":
@@ -56,6 +59,7 @@ const Sidebar = () => {
           };
       }
     }
+    
     return {
       text: onlineFriends.includes(user._id) ? "Online" : "Offline",
       color: onlineFriends.includes(user._id) ? "text-green-500" : "text-zinc-400"
@@ -126,8 +130,9 @@ const Sidebar = () => {
         <div className="overflow-y-auto w-full py-3 flex-1">
           {filteredFriends.map(user => {
             const statusInfo = getUserStatus(user);
-            const isRecording = selectedFriend?._id === user._id &&
-              (somethingDoingType === "recording" || somethingDoingType === "recording...");
+            const friendStatus = friendsStatus[user._id];
+            const isRecording = friendStatus && friendStatus.isDoingSomething &&
+              (friendStatus.type === "recording" || friendStatus.type === "recording...");
 
             return (
               <button

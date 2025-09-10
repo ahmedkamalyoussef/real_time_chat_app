@@ -12,9 +12,13 @@ function MessageInput() {
         clearTimeout(typingTimeoutRef.current);
       }
       doSomething(action || "typing");
-      typingTimeoutRef.current = setTimeout(() => {
-        doSomething("stop-typing");
-      }, 500);
+      
+      // Only set timeout for typing, not for recording
+      if (action === "typing" || !action) {
+        typingTimeoutRef.current = setTimeout(() => {
+          doSomething("stop-typing");
+        }, 500);
+      }
     }
   };
 

@@ -85,6 +85,34 @@ export const acceptFriendRequest = async (req, res) => {
       });
     }
 
+    // Update online friends for both users after accepting friend request
+    const { getFriendsIds } = await import("../utils/helpers.js");
+    const userSocketMap = {};
+    
+    // Get all online users
+    for (const [socketId, socket] of io.sockets.sockets) {
+      const userId = socket.handshake.query.userId;
+      if (userId) {
+        userSocketMap[userId] = socketId;
+      }
+    }
+
+    // Update online friends for both users
+    const updateOnlineFriendsForUser = async (userId) => {
+      const friendsIds = await getFriendsIds(userId);
+      const onlineUsers = Object.keys(userSocketMap);
+      const onlineFriends = onlineUsers.filter(
+        (id) => id !== userId && friendsIds.includes(id)
+      );
+      const userSocketId = userSocketMap[userId];
+      if (userSocketId) {
+        io.to(userSocketId).emit("getOnlineUsers", onlineFriends);
+      }
+    };
+
+    await updateOnlineFriendsForUser(requesterId);
+    await updateOnlineFriendsForUser(recipientId);
+
     res.status(200).json(friendship);
   } catch (err) {
     res.status(400).json({ error: err.message });

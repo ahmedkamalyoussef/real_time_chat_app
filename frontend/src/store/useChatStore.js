@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
     selectedFriend: null,
     isDoingSomething: false,
     somethingDoingType: null,
+    friendsStatus: {}, // Store typing/recording status for each friend
 
     doSomething: async (type) => {
         const { selectedFriend } = get();
@@ -31,12 +32,34 @@ export const useChatStore = create((set, get) => ({
         const socket = useAuthStore.getState().socket;
         if (!socket) return;
         socket.on('userDoSomething', ({ senderId, type }) => {
-            const selectedFriend = get().selectedFriend;
-            // if (selectedFriend && selectedFriend._id === senderId) {
-            set({ isDoingSomething: true, somethingDoingType: type });
-            // }
-        }
-        )
+            const { selectedFriend, friendsStatus } = get();
+            
+            // Update global state for selected friend
+            if (selectedFriend && selectedFriend._id === senderId) {
+                if (type === 'stop-recording' || type === 'stop-typing') {
+                    set({ isDoingSomething: false, somethingDoingType: null });
+                } else {
+                    set({ isDoingSomething: true, somethingDoingType: type });
+                }
+            }
+            
+            // Update friends status for sidebar
+            if (type === 'stop-recording' || type === 'stop-typing') {
+                set({
+                    friendsStatus: {
+                        ...friendsStatus,
+                        [senderId]: { isDoingSomething: false, type: null }
+                    }
+                });
+            } else {
+                set({
+                    friendsStatus: {
+                        ...friendsStatus,
+                        [senderId]: { isDoingSomething: true, type: type }
+                    }
+                });
+            }
+        });
     },
     unSubscripeToDoingSomething: () => {
         const socket = useAuthStore.getState().socket;
@@ -95,5 +118,12 @@ export const useChatStore = create((set, get) => ({
         const socket = useAuthStore.getState().socket;
         if (!socket) return;
         socket.off('newMessage');
+    },
+
+    clearFriendStatus: (friendId) => {
+        const { friendsStatus } = get();
+        const newStatus = { ...friendsStatus };
+        delete newStatus[friendId];
+        set({ friendsStatus: newStatus });
     }
 }));

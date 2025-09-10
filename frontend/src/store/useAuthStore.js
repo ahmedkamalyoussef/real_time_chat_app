@@ -87,7 +87,18 @@ export const useAuthStore = create((set, get) => ({
     set({ socket });
 
     socket.on("getOnlineUsers", (userIds) => {
+      const previousOnlineFriends = useFriendsStore.getState().onlineFriends;
       useFriendsStore.getState().setOnlineFriends(userIds);
+      
+      // Clear typing/recording status for users who went offline
+      const currentOnlineFriends = userIds;
+      const { friendsStatus, clearFriendStatus } = useChatStore.getState();
+      
+      Object.keys(friendsStatus).forEach(friendId => {
+        if (!currentOnlineFriends.includes(friendId)) {
+          clearFriendStatus(friendId);
+        }
+      });
     });
     socket.on("newFriendRequest", () => {
       useFriendsStore.getState().getFriendRequests();
@@ -97,6 +108,28 @@ export const useAuthStore = create((set, get) => ({
       useFriendsStore.getState().getFriends();
     });
     useChatStore.getState().subscripeToDoingSomething();
+
+    // Handle connection events
+    socket.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected from socket server");
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    // Send periodic heartbeat to keep connection alive
+    const heartbeatInterval = setInterval(() => {
+      if (socket.connected) {
+        socket.emit("ping");
+      } else {
+        clearInterval(heartbeatInterval);
+      }
+    }, 20000); // Send ping every 20 seconds
 
     const groups = useGroupsStore.getState().groups;
     if (groups?.length) {

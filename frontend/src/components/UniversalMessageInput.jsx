@@ -86,6 +86,8 @@ function UniversalMessageInput({ sendMessage, onTyping, onStopTyping, disabled =
         }
         audioChunksRef.current = [];
         if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+        // Send stop-recording signal to other user
+        if (onTyping) onTyping("stop-recording");
       };
 
       mediaRecorderRef.current.start();
@@ -103,6 +105,8 @@ function UniversalMessageInput({ sendMessage, onTyping, onStopTyping, disabled =
       mediaRecorderRef.current.stop();
       setRecording(false);
       clearInterval(timerRef.current);
+      // Send stop-recording signal to other user
+      if (onTyping) onTyping("stop-recording");
     }
   };
 
@@ -112,6 +116,8 @@ function UniversalMessageInput({ sendMessage, onTyping, onStopTyping, disabled =
       mediaRecorderRef.current.stop();
       setRecording(false);
       clearInterval(timerRef.current);
+      // Send stop-recording signal to other user
+      if (onTyping) onTyping("stop-recording");
     }
   };
 
